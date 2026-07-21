@@ -1,0 +1,15 @@
+# Paikalliset ChatGPT- ja Codex-työaineistot
+.codex
+.agents
+.git-empty-backup
+work
+
+# Windows ja käyttöjärjestelmä
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Väliaikaiset tiedostot
+.tmp
+.bak
+.log
