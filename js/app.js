@@ -1,0 +1,10 @@
+(function (PL) {
+  'use strict';
+  const DEFAULT_PARAMS={speed:20,angleDeg:45,height:0,mass:1,gravity:9.81,dragCoefficient:.02,dt:.01};
+  let controller,tasks;
+  function reset(){try{controller.reset(PL.UI.params());document.getElementById('error').textContent='';}catch(error){document.getElementById('error').textContent=error.message;}}
+  function applyParams(values){Object.keys(values).forEach(key=>{const input=document.getElementById(key);if(!input)return;if(key==='showCalculationPoints'||key==='showInitialVector')input.checked=Boolean(values[key]);else input.value=values[key];});reset();}
+  function restoreBase(){if(tasks)tasks.clearToBase();document.querySelector('input[name="scaleMode"][value="true-scale"]').checked=true;document.querySelector('input[name="scaleMode"][value="fit"]').checked=false;document.getElementById('showInitialVector').checked=true;document.getElementById('showCalculationPoints').checked=false;applyParams(DEFAULT_PARAMS);}
+  function init(){controller=new PL.Simulation.Controller(PL.UI.render);document.getElementById('play').addEventListener('click',()=>controller.play());document.getElementById('pause').addEventListener('click',()=>controller.pause());document.getElementById('step').addEventListener('click',()=>controller.step());document.getElementById('reset').addEventListener('click',reset);document.getElementById('restoreDefaults').addEventListener('click',restoreBase);PL.UI.fields.forEach(key=>document.getElementById(key).addEventListener('change',reset));document.querySelectorAll('input[name="scaleMode"], #showInitialVector, #showCalculationPoints').forEach(element=>element.addEventListener('change',()=>controller.emit()));window.addEventListener('resize',()=>controller.emit());reset();tasks=PL.TasksUI.init({getSnapshot:()=>controller.snapshot(),applyParams});PL.App={controller,reset,applyParams,restoreBase,DEFAULT_PARAMS,tasks};}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+}(window.ProjectileLab=window.ProjectileLab||{}));

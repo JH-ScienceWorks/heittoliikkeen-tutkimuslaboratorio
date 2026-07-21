@@ -1,0 +1,366 @@
+<!doctype html>
+<!--
+  Sovellus: Fysiikan tutkimuslaboratorio – heittoliike ja mallien vertailu
+  Versio: 1.0.0
+  Muodostamispäivä: 2026-07-13
+  Tämä tiedosto toimii täysin paikallisesti eikä lähetä tai tallenna käyttäjän tietoja verkkoon.
+--><html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Heittoliikkeen tutkimuslaboratorio</title>
+<style>
+/* Upotettu lähdetiedosto: css/styles.css */
+:root{color-scheme:light;--ink:#17222d;--muted:#5d6a76;--panel:#fff;--bg:#eef3f6;--accent:#086788;--line:#cbd6dc}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}header{padding:1.1rem clamp(1rem,3vw,2.5rem);color:#fff;background:linear-gradient(120deg,#073b4c,#086788)}header h1{margin:0;font-size:clamp(1.45rem,3vw,2.2rem)}header p{margin:.25rem 0 0;color:#d7edf4}.layout{display:grid;grid-template-columns:minmax(250px,320px) 1fr;gap:1rem;padding:1rem;max-width:1500px;margin:auto}.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 3px 14px #1232;padding:1rem}.controls{grid-row:span 3}.controls h2,.panel h2{margin:.1rem 0 .8rem;font-size:1.05rem}.field{display:grid;grid-template-columns:1fr 7.2rem;align-items:center;gap:.6rem;margin:.55rem 0}.field input{width:100%;padding:.42rem;border:1px solid #9aabb5;border-radius:6px;font:inherit}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1rem}button{padding:.6rem;border:1px solid #07516c;border-radius:7px;background:#086788;color:#fff;font-weight:650;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button.secondary{background:#fff;color:#07516c}.status{margin-top:.9rem;padding:.65rem;background:#edf7fa;border-radius:7px}.error{min-height:1.4rem;color:#b42318;font-weight:600}.canvas{width:100%;height:310px;display:block}.charts{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.charts .canvas{height:240px}.legend{display:flex;flex-wrap:wrap;gap:1rem;color:var(--muted);font-size:.9rem}.swatch{display:inline-block;width:25px;margin-right:.35rem;vertical-align:middle;border-top:3px solid}.a{border-color:#0b6e99}.n{border-color:#d97706;border-top-style:dashed}.d{border-color:#8b3fa0;border-top-style:dotted}.readouts{display:grid;grid-template-columns:repeat(6,minmax(80px,1fr));gap:.55rem}.readout{padding:.55rem;background:#f3f7f9;border-radius:7px}.readout span{display:block;color:var(--muted);font-size:.78rem}.readout strong{font-size:1rem}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}th,td{padding:.5rem;border-bottom:1px solid var(--line);text-align:right}th:first-child{text-align:left}thead th{font-size:.8rem;color:var(--muted)}.hint{font-size:.82rem;color:var(--muted)}@media(max-width:900px){.layout{grid-template-columns:1fr}.controls{grid-row:auto}.charts{grid-template-columns:1fr}.readouts{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.readouts{grid-template-columns:repeat(2,1fr)}.field{grid-template-columns:1fr 6.5rem}.canvas{height:250px}}
+</style>
+<style>
+/* Upotettu lähdetiedosto: css/pedagogy.css */
+.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}.panel-heading h2{margin-bottom:0}.view-controls{display:flex;gap:.85rem;flex-wrap:wrap;font-size:.88rem;color:var(--muted)}.view-controls label{display:flex;align-items:center;gap:.3rem}.scale-warning{margin:.6rem 0;padding:.6rem .75rem;border-left:4px solid #d97706;background:#fff8e8;color:#754a00;font-size:.88rem}.model-status,.task-context{margin:.6rem 0;padding:.65rem .8rem;border-left:4px solid #0b6e99;background:#edf7fa;color:#164e63;font-size:.9rem}.full-button{grid-column:1/-1}.research-panel{grid-column:1/-1}.research-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:.8rem}.research-header h2,.research-header p{margin:.1rem 0}.research-header select{display:block;margin-top:.3rem;padding:.5rem;min-width:260px;border:1px solid #9aabb5;border-radius:6px;background:#fff;font:inherit}.research-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:1.5rem;margin-top:1rem}.research-grid h3{margin:1rem 0 .35rem;font-size:1rem;color:#07516c}.research-grid textarea{display:block;width:100%;margin-top:.4rem;padding:.65rem;border:1px solid #9aabb5;border-radius:7px;resize:vertical;font:inherit}.model-note,.task-hint,.task-feedback{padding:.65rem .75rem;border-radius:7px;background:#edf7fa}.model-note{font-size:.88rem}.task-feedback{border-left:4px solid var(--accent)}.preset-list{display:flex;gap:.45rem;flex-wrap:wrap}.preset-button{padding:.45rem .65rem;background:#fff;color:#07516c}.observation-count{margin-left:.65rem;color:var(--muted);font-size:.85rem}.table-scroll{overflow:auto;margin-top:.65rem}.observation-table{min-width:720px;font-size:.86rem}.observation-table th,.observation-table td{text-align:right}.observation-table th:first-child,.observation-table td:first-child{text-align:left}@media(max-width:900px){.research-grid{grid-template-columns:1fr}.research-header select{min-width:220px;width:100%}}
+</style>
+<style>
+/* Upotettu lähdetiedosto: css/accessibility.css */
+.layout,.panel,.charts,.research-grid,.research-grid>section{min-width:0}.panel,.model-card,.research-panel{overflow-wrap:anywhere}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}.instant-comparison{display:grid;grid-template-columns:repeat(2,minmax(190px,1fr));gap:.75rem}.comparison-help{margin:.2rem 0 .8rem;color:var(--muted);font-size:.9rem}.model-card{padding:.75rem;border:1px solid var(--line);border-top:4px solid #d97706;border-radius:9px;background:#fbfcfd}.model-card.drag-card{border-top-color:#8b3fa0}.model-card h3{margin:0;font-size:.98rem;color:#263746}.phase-status{display:inline-block;margin:.4rem 0;padding:.18rem .48rem;border-radius:999px;background:#e7f5ed;color:#176b36;font-size:.78rem;font-weight:700}.phase-status.landed{background:#eef1f3;color:#4b5964}.model-card dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;margin:.25rem 0 0}.model-card dl div{padding:.35rem .45rem;background:#f1f5f7;border-radius:6px}.model-card dt{color:var(--muted);font-size:.76rem}.model-card dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}.task-intro{margin-top:1rem;padding:.8rem 1rem;border-radius:8px;background:#f4f8fa}.task-intro h3{margin:.1rem 0 .35rem;color:#07516c}.table-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}button,input,select,textarea{font:inherit}button{min-height:40px}button:hover:not(:disabled){filter:brightness(.94)}button:active:not(:disabled){transform:translateY(1px);filter:brightness(.86)}button:disabled{opacity:.5;border-color:#7d8a92;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #ffb000;outline-offset:3px;box-shadow:0 0 0 1px #17222d}.view-controls input:focus-visible{outline-offset:2px}.field input:disabled{background:#e8ecef;color:#65717a}.canvas{max-width:100%}@media(max-width:1100px){.layout{grid-template-columns:minmax(235px,280px) minmax(0,1fr);padding:.75rem}.readouts{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}.controls{grid-row:auto}.research-panel{grid-column:auto}}@media(max-width:650px){.instant-comparison{grid-template-columns:1fr}.view-controls{flex-direction:column;gap:.45rem}.research-header label,.research-header select{width:100%;min-width:0}.buttons{grid-template-columns:1fr}.full-button{grid-column:auto}.panel{padding:.8rem}.model-card dl{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:380px){.model-card dl{grid-template-columns:1fr}.field{grid-template-columns:1fr}.field input{margin-top:.2rem}}
+.field input:invalid{border-color:#b42318;background:#fff7f6}
+</style></head><body>
+<header><h1>Heittoliikkeen tutkimuslaboratorio</h1><p>Analyyttisen ja numeerisen mallin vertailu</p></header><main class="layout">
+<section class="panel controls"><h2>Alkuarvot ja malli</h2><label class="field"><span>Lähtönopeus (m/s)</span><input id="speed" type="number" min="0" max="200" step="1" value="20" required aria-describedby="error"></label><label class="field"><span>Lähtökulma (°)</span><input id="angleDeg" type="number" min="-89" max="90" step="1" value="45" required aria-describedby="error"></label><label class="field"><span>Lähtökorkeus (m)</span><input id="height" type="number" min="0" max="1000" step="1" value="0" required aria-describedby="error"></label><label class="field"><span>Massa (kg)</span><input id="mass" type="number" min="0.001" max="1000" step="0.1" value="1" required aria-describedby="error"></label><label class="field"><span>Gravitaatio (m/s²)</span><input id="gravity" type="number" min="0.1" max="30" step="0.01" value="9.81" required aria-describedby="error"></label><label class="field"><span>Vastuskerroin k (kg/m)</span><input id="dragCoefficient" type="number" min="0" max="10" step="0.005" value="0.02" required aria-describedby="error"></label><label class="field"><span>Aika-askel Δt (s)</span><input id="dt" type="number" min="0.001" max="0.5" step="0.001" value="0.01" required aria-describedby="error"></label><div class="buttons"><button id="play">Käynnistä</button><button id="pause" class="secondary">Tauko</button><button id="step" class="secondary">Yksi askel</button><button id="reset">Nollaa koe</button><button id="restoreDefaults" class="secondary full-button">Palauta perusnäkymä</button></div><div class="status"><strong id="status" role="status" aria-live="polite" aria-atomic="true">Valmis</strong><br>Aika: <span id="timeValue">0,000 s</span></div><p id="error" class="error" role="alert"></p><p class="hint">k on yhdistetty neliöllisen vastuksen kerroin yhtälössä F<sub>d</sub> = −k|v|v.</p></section>
+<section class="panel"><div class="panel-heading"><h2>Ratakuva ja animaatio</h2><div class="view-controls" role="group" aria-label="Ratakuvan näyttöasetukset"><label><input type="radio" name="scaleMode" value="true-scale" checked> Oikea mittakaava</label><label><input type="radio" name="scaleMode" value="fit"> Sovita kuvaajaan</label><label><input id="showInitialVector" type="checkbox" checked> Näytä alkunopeusvektori</label><label><input id="showCalculationPoints" type="checkbox"> Näytä laskentapisteet</label></div></div><p id="scaleWarning" class="scale-warning" hidden>X- ja y-akselien mittakaavat eroavat. Kulmat ja radan muoto eivät näy oikeassa suhteessa. Lähtökulman numeerinen arvo on silti oikea.</p><p id="zeroDragNotice" class="model-status" hidden>Kun k=0, neliöllisen ilmanvastuksen termi häviää ja malli palautuu vastuksettomaksi malliksi. Ratojen päällekkäisyys on odotettu tulos.</p><div class="legend"><span><i class="swatch a"></i>Analyyttinen</span><span><i class="swatch n"></i>RK4, ei vastusta</span><span><i class="swatch d"></i><span id="dragLegendLabel">Neliöllinen vastus, k=0,02</span></span></div><canvas id="trajectory" class="canvas" role="img" aria-label="Heittoliikkeen ratakuva" aria-describedby="trajectorySummary"></canvas><p id="trajectorySummary" class="sr-only"></p></section>
+<section class="panel instant-panel"><h2>Hetkellisten arvojen vertailu</h2><p class="comparison-help">Arvot vastaavat samaa simulaatioaikaa. Vastuksettomassa mallissa vₓ pysyy vakiona; ilmanvastusmallissa se yleensä pienenee.</p><div class="instant-comparison"><section class="model-card" aria-labelledby="freeModelTitle"><h3 id="freeModelTitle">Vastukseton vertailumalli</h3><p id="freePhase" class="phase-status">Lennossa</p><dl><div><dt>x</dt><dd id="freeX">—</dd></div><div><dt>y</dt><dd id="freeY">—</dd></div><div><dt>vₓ</dt><dd id="freeVx">—</dd></div><div><dt>vᵧ</dt><dd id="freeVy">—</dd></div><div><dt>|v|</dt><dd id="freeSpeed">—</dd></div></dl></section><section class="model-card drag-card" aria-labelledby="dragModelTitle"><h3 id="dragModelTitle">Ilmanvastusmalli</h3><p id="dragPhase" class="phase-status">Lennossa</p><dl><div><dt>x</dt><dd id="dragX">—</dd></div><div><dt>y</dt><dd id="dragY">—</dd></div><div><dt>vₓ</dt><dd id="dragVx">—</dd></div><div><dt>vᵧ</dt><dd id="dragVy">—</dd></div><div><dt>|v|</dt><dd id="dragSpeed">—</dd></div></dl></section></div><h2>Koetulokset</h2><div class="table-scroll"><table><thead><tr><th>Malli</th><th>Lentoaika (s)</th><th>Lakikorkeus (m)</th><th>Kantama (m)</th><th>Osumanopeus (m/s)</th></tr></thead><tbody id="metricsBody"></tbody></table></div></section>
+<section class="charts"><div class="panel"><h2>Paikka ajan funktiona</h2><p class="hint">Kunkin mallin x(t) on vahva ja y(t) vaalea viiva.</p><canvas id="positionChart" class="canvas" role="img" aria-label="Paikan kuvaaja" aria-describedby="positionSummary"></canvas><p id="positionSummary" class="sr-only"></p></div><div class="panel"><h2>Nopeus ajan funktiona</h2><canvas id="velocityChart" class="canvas" role="img" aria-label="Nopeuden kuvaaja" aria-describedby="velocitySummary"></canvas><p id="velocitySummary" class="sr-only"></p></div></section>
+<section class="panel research-panel" aria-labelledby="researchTitle"><div class="research-header"><div><h2 id="researchTitle">Tutkimustehtävät</h2><p>Muodosta ennuste, tee kokeita ja perustele päätelmäsi havaintojen avulla.</p></div><label>Valitse tehtävä <select id="taskSelect"></select></label></div><div id="taskIntro" class="task-intro"><h3>Vapaa tutkiminen</h3><p>Tutki heittoliikettä vapaasti muuttamalla alkuarvoja. Vertaa vastuksetonta analyyttistä mallia, vastuksetonta RK4-ratkaisua ja neliöllisen ilmanvastuksen mallia. Valitse tutkimustehtävä, kun haluat edetä ohjatun tutkimuksen avulla.</p></div><div id="taskWorkspace" hidden><p id="taskContextNotice" class="task-context"></p><div class="research-grid"><section><h3>1. Tavoite ja tehtävänanto</h3><p id="taskGoal"></p><p id="taskInstructions"></p><div class="model-note"><strong>Mallit:</strong> Analyyttinen ratkaisu ja RK4 ilman vastusta kuvaavat samaa voimamallia eri ratkaisumenetelmillä. Neliöllinen ilmanvastus on eri fysikaalinen malli.</div><h3>2. Ennuste tai hypoteesi</h3><label id="hypothesisPrompt" for="taskHypothesis"></label><textarea id="taskHypothesis" rows="4"></textarea><h3>3. Ehdotetut kokeet</h3><div id="taskPresets" class="preset-list"></div></section><section><h3>4. Havainnot</h3><button id="addObservation" type="button">Kirjaa nykyinen koe</button><span id="observationCount" class="observation-count"></span><div class="table-scroll"><table class="observation-table"><thead id="observationHead"></thead><tbody id="observationBody"></tbody></table></div><h3>5. Päätelmä</h3><label for="taskConclusion">Mitä havaintosi osoittavat?</label><textarea id="taskConclusion" rows="4"></textarea><h3>6. Vihjeet ja palaute</h3><button id="showHint" type="button" class="secondary">Näytä seuraava vihje</button><p id="taskHint" class="task-hint"></p><p id="taskFeedback" class="task-feedback" aria-live="polite"></p><button id="resetTask" type="button" class="secondary">Nollaa tämä tehtävä</button></section></div></div></section>
+</main>
+<script>
+/* Upotettu lähdetiedosto: js/physics.js */
+(function (PL) {
+  'use strict';
+
+  const EPSILON = 1e-12;
+  const MAX_SAMPLES = 100000;
+  const PARAM_LIMITS = {
+    speed: [0, 200], angleDeg: [-89, 90], height: [0, 1000], mass: [0.001, 1000],
+    gravity: [0.1, 30], dragCoefficient: [0, 10], dt: [0.001, 0.5]
+  };
+  const PARAM_LABELS = {speed:'Lähtönopeus',angleDeg:'Lähtökulma',height:'Lähtökorkeus',mass:'Massa',gravity:'Gravitaatio',dragCoefficient:'Vastuskerroin',dt:'Aika-askel'};
+
+  function validateParams(p) {
+    Object.keys(PARAM_LIMITS).forEach(function (key) {
+      if (!Number.isFinite(p[key])) throw new Error('Virheellinen arvo: ' + key);
+      const limits=PARAM_LIMITS[key];
+      if(p[key]<limits[0]||p[key]>limits[1])throw new Error(PARAM_LABELS[key]+' on sallitun alueen '+limits[0]+'–'+limits[1]+' ulkopuolella.');
+    });
+  }
+
+  function initialState(p) {
+    const angle = p.angleDeg * Math.PI / 180;
+    return { t: 0, x: 0, y: p.height, vx: p.speed * Math.cos(angle), vy: p.speed * Math.sin(angle) };
+  }
+
+  function analyticAt(p, t) {
+    const s0 = initialState(p);
+    return {
+      t: t,
+      x: s0.vx * t,
+      y: p.height + s0.vy * t - 0.5 * p.gravity * t * t,
+      vx: s0.vx,
+      vy: s0.vy - p.gravity * t
+    };
+  }
+
+  function analyticMetrics(p) {
+    validateParams(p);
+    const s0 = initialState(p);
+    const flightTime = (s0.vy + Math.sqrt(s0.vy * s0.vy + 2 * p.gravity * p.height)) / p.gravity;
+    const apexTime = Math.max(0, s0.vy / p.gravity);
+    const apex = analyticAt(p, Math.min(apexTime, flightTime));
+    const impact = analyticAt(p, flightTime);
+    return {
+      flightTime: flightTime,
+      maxHeight: Math.max(p.height, apex.y),
+      range: impact.x,
+      impactSpeed: Math.hypot(impact.vx, impact.vy),
+      apexTime: Math.min(apexTime, flightTime)
+    };
+  }
+
+  function acceleration(p, state, model) {
+    if (model !== 'quadratic' || p.dragCoefficient === 0) return { ax: 0, ay: -p.gravity };
+    const speed = Math.hypot(state.vx, state.vy);
+    const factor = -(p.dragCoefficient / p.mass) * speed;
+    return { ax: factor * state.vx, ay: -p.gravity + factor * state.vy };
+  }
+
+  function createAnalyticTrajectory(p, sampleDt) {
+    const metrics = analyticMetrics(p);
+    const samples = [];
+    const dt = sampleDt===undefined?p.dt:sampleDt;
+    if(!Number.isFinite(dt)||dt<=0)throw new Error('Analyyttisen radan näytevälin tulee olla positiivinen ja äärellinen.');
+    if(Math.ceil(metrics.flightTime/dt)+1>MAX_SAMPLES)throw new Error('Laskenta vaatisi liian monta pistettä. Suurenna aika-askelta tai pienennä lentoaikaa.');
+    for (let t = 0; t < metrics.flightTime; t += dt) samples.push(analyticAt(p, t));
+    const impact = analyticAt(p, metrics.flightTime);
+    impact.y = 0;
+    samples.push(impact);
+    return { id: 'analytic', label: 'Analyyttinen', samples: samples, metrics: metrics };
+  }
+
+  function interpolate(samples, t) {
+    if (t <= 0) return samples[0];
+    const last = samples[samples.length - 1];
+    if (t >= last.t) return last;
+    let lo = 0, hi = samples.length - 1;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (samples[mid].t <= t) lo = mid; else hi = mid;
+    }
+    const a = samples[lo], b = samples[hi];
+    const f = (t - a.t) / (b.t - a.t || 1);
+    return { t: t, x: a.x + (b.x-a.x)*f, y: a.y + (b.y-a.y)*f, vx: a.vx + (b.vx-a.vx)*f, vy: a.vy + (b.vy-a.vy)*f };
+  }
+
+  PL.Physics = { EPSILON, MAX_SAMPLES, PARAM_LIMITS, validateParams, initialState, analyticAt, analyticMetrics, acceleration, createAnalyticTrajectory, interpolate };
+}(window.ProjectileLab = window.ProjectileLab || {}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/integrator.js */
+(function (PL) {
+  'use strict';
+  const MAX_STEPS=100000;
+
+  function finiteState(s){return Number.isFinite(s.t)&&Number.isFinite(s.x)&&Number.isFinite(s.y)&&Number.isFinite(s.vx)&&Number.isFinite(s.vy);}
+  function validateStability(p,model){if(model!=='quadratic'||p.dragCoefficient===0)return;const initial=PL.Physics.initialState(p);if(initial.y===0&&initial.vy<=0)return;const speedBound=Math.sqrt(p.speed*p.speed+2*p.gravity*p.height),dragChange=p.dt*p.dragCoefficient*Math.max(speedBound,Math.sqrt(p.mass*p.gravity/p.dragCoefficient))/p.mass;if(dragChange>1)throw new Error('Numeerinen laskenta muuttuisi epävakaaksi näillä arvoilla. Pienennä aika-askelta tai vastuskerrointa taikka suurenna massaa.');}
+
+  function derivative(p, s, model) {
+    const a = PL.Physics.acceleration(p, s, model);
+    return { x: s.vx, y: s.vy, vx: a.ax, vy: a.ay };
+  }
+
+  function shifted(s, k, h) {
+    return { t: s.t + h, x: s.x + h*k.x, y: s.y + h*k.y, vx: s.vx + h*k.vx, vy: s.vy + h*k.vy };
+  }
+
+  function rk4Step(p, s, h, model) {
+    if(!Number.isFinite(h)||h<=0)throw new Error('RK4-askeleen tulee olla positiivinen ja äärellinen.');
+    const k1 = derivative(p, s, model);
+    const k2 = derivative(p, shifted(s, k1, h/2), model);
+    const k3 = derivative(p, shifted(s, k2, h/2), model);
+    const k4 = derivative(p, shifted(s, k3, h), model);
+    const next = {
+      t: s.t + h,
+      x: s.x + h*(k1.x + 2*k2.x + 2*k3.x + k4.x)/6,
+      y: s.y + h*(k1.y + 2*k2.y + 2*k3.y + k4.y)/6,
+      vx: s.vx + h*(k1.vx + 2*k2.vx + 2*k3.vx + k4.vx)/6,
+      vy: s.vy + h*(k1.vy + 2*k2.vy + 2*k3.vy + k4.vy)/6
+    };
+    if(!finiteState(next))throw new Error('Numeerinen laskenta muuttui epävakaaksi. Pienennä aika-askelta tai muuta parametreja.');
+    return next;
+  }
+
+  function locateEvent(p, start, h, model, valueFn) {
+    let lo = 0, hi = h, state = start;
+    for (let i = 0; i < 48; i += 1) {
+      const mid = (lo + hi) / 2;
+      state = rk4Step(p, start, mid, model);
+      if (valueFn(state) > 0) lo = mid; else hi = mid;
+    }
+    return rk4Step(p, start, (lo + hi) / 2, model);
+  }
+
+  function simulate(p, model) {
+    PL.Physics.validateParams(p);
+    validateStability(p,model);
+    const samples = [];
+    let state = PL.Physics.initialState(p);
+    samples.push(state);
+    let maxHeight = state.y, apexTime = 0, impact = null;
+    const maxSteps = MAX_STEPS;
+
+    if (state.y === 0 && state.vy <= 0) impact = state;
+    for (let i = 0; !impact && i < maxSteps; i += 1) {
+      const next = rk4Step(p, state, p.dt, model);
+      if (state.vy > 0 && next.vy <= 0) {
+        const apex = locateEvent(p, state, p.dt, model, function (s) { return s.vy; });
+        maxHeight = Math.max(maxHeight, apex.y);
+        apexTime = apex.t;
+      } else if (next.y > maxHeight) {
+        maxHeight = next.y; apexTime = next.t;
+      }
+      if (state.y >= 0 && next.y < 0) {
+        impact = locateEvent(p, state, p.dt, model, function (s) { return s.y; });
+        impact.y = 0;
+        samples.push(impact);
+      } else {
+        samples.push(next); state = next;
+      }
+    }
+    if (!impact) throw new Error('Maaosumaa ei löytynyt '+MAX_STEPS+' laskenta-askeleessa. Suurenna aika-askelta tai muuta parametreja.');
+    return {
+      id: model === 'quadratic' ? 'drag' : 'numeric',
+      label: model === 'quadratic' ? 'Neliöllinen vastus' : 'RK4, ei vastusta',
+      samples: samples,
+      metrics: { flightTime: impact.t, maxHeight: maxHeight, range: impact.x, impactSpeed: Math.hypot(impact.vx, impact.vy), apexTime: apexTime }
+    };
+  }
+
+  PL.Integrator = { MAX_STEPS, derivative, rk4Step, locateEvent, validateStability, simulate };
+}(window.ProjectileLab = window.ProjectileLab || {}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/simulation.js */
+(function (PL) {
+  'use strict';
+  function Controller(onUpdate) {
+    this.onUpdate = onUpdate;
+    this.running = false; this.time = 0; this.lastFrame = null; this.raf = null;
+    this.params = null; this.trajectories = null; this.duration = 0;
+  }
+  Controller.prototype.reset = function (params) {
+    this.pause();
+    const nextParams=Object.assign({},params),nextTrajectories={
+      analytic: PL.Physics.createAnalyticTrajectory(nextParams),
+      numeric: PL.Integrator.simulate(nextParams, 'none'),
+      drag: PL.Integrator.simulate(nextParams, 'quadratic')
+    };
+    const nextDuration=Math.max(nextTrajectories.analytic.metrics.flightTime,nextTrajectories.numeric.metrics.flightTime,nextTrajectories.drag.metrics.flightTime);
+    this.params=nextParams;this.time=0;this.trajectories=nextTrajectories;this.duration=nextDuration;
+    this.emit();
+  };
+  Controller.prototype.emit = function () { if (this.onUpdate) this.onUpdate(this.snapshot()); };
+  Controller.prototype.snapshot = function () {
+    const states = {};
+    for (const key in this.trajectories) states[key] = PL.Physics.interpolate(this.trajectories[key].samples, this.time);
+    return { time: this.time, duration: this.duration, running: this.running, params: this.params, trajectories: this.trajectories, states: states };
+  };
+  Controller.prototype.play = function () {
+    if (!this.trajectories || this.time >= this.duration) return;
+    this.running = true; this.lastFrame = null; this.loop(); this.emit();
+  };
+  Controller.prototype.loop = function () {
+    const self = this;
+    this.raf = requestAnimationFrame(function (now) {
+      if (!self.running) return;
+      if (self.lastFrame !== null) self.time = Math.min(self.duration, self.time + Math.min((now-self.lastFrame)/1000, .05));
+      self.lastFrame = now; self.emit();
+      if (self.time >= self.duration) self.pause(); else self.loop();
+    });
+  };
+  Controller.prototype.pause = function () { this.running = false; this.lastFrame = null; if (this.raf) cancelAnimationFrame(this.raf); this.raf = null; if (this.trajectories) this.emit(); };
+  Controller.prototype.step = function () { if (!this.trajectories) return; this.pause(); this.time = Math.min(this.duration, this.time + this.params.dt); this.emit(); };
+  PL.Simulation = { Controller };
+}(window.ProjectileLab = window.ProjectileLab || {}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/axis.js */
+(function (PL) {
+  'use strict';
+  function decimalPlacesForStep(step) { const value=Math.abs(step); if(!Number.isFinite(value)||value===0)return 0; const usefulLimit=Math.max(0,1-Math.floor(Math.log10(value))); for(let places=0;places<=12;places+=1){const scaled=value*Math.pow(10,places);if(Math.abs(scaled-Math.round(scaled))<1e-9)return places<=usefulLimit?places:usefulLimit;} return usefulLimit; }
+  function formatTickFi(value,step){const places=decimalPlacesForStep(step),threshold=.5*Math.pow(10,-places),safe=Math.abs(value)<threshold?0:value;return safe.toFixed(places).replace('.',',');}
+  function createTicks(max,intervals){const count=Math.max(1,Math.floor(intervals)),step=max/count;return Array.from({length:count+1},function(_,index){const value=index===count?max:step*index;return {value:value,label:formatTickFi(value,step)};});}
+  function linearScale(domainMin,domainMax,rangeMin,rangeMax){const size=domainMax-domainMin;if(!Number.isFinite(size)||Math.abs(size)<1e-15)return function(){return(rangeMin+rangeMax)/2;};return function(value){return rangeMin+(value-domainMin)/size*(rangeMax-rangeMin);};}
+  PL.Axis={decimalPlacesForStep,formatTickFi,createTicks,linearScale};
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/trajectory-view.js */
+(function (PL) {
+  'use strict';
+  function createTransform(dataBounds,plot,mode){const dataXMax=Math.max(1e-9,dataBounds.xMax),dataYMax=Math.max(1e-9,dataBounds.yMax),width=plot.right-plot.left,height=plot.bottom-plot.top;let xMax=dataXMax,yMax=dataYMax,pixelsPerMeterX=width/xMax,pixelsPerMeterY=height/yMax;if(mode==='true-scale'){const common=Math.min(pixelsPerMeterX,pixelsPerMeterY);pixelsPerMeterX=common;pixelsPerMeterY=common;xMax=width/common;yMax=height/common;}function mapX(x){return plot.left+x*pixelsPerMeterX;}function mapY(y){return plot.bottom-y*pixelsPerMeterY;}function mapPoint(x,y){return{x:mapX(x),y:mapY(y)};}return{mode,xMax,yMax,pixelsPerMeterX,pixelsPerMeterY,mapX,mapY,mapPoint};}
+  function dataBounds(trajectories){const all=Object.values(trajectories);return{xMax:Math.max(1,...all.map(t=>t.metrics.range))*1.06,yMax:Math.max(1,...all.map(t=>t.metrics.maxHeight))*1.12};}
+  function velocityVector(params,scaleSeconds){const seconds=scaleSeconds===undefined?.25:scaleSeconds,start=PL.Physics.initialState(params);return{start:{x:start.x,y:start.y},end:{x:start.x+start.vx*seconds,y:start.y+start.vy*seconds},scaleSeconds:seconds,speed:Math.hypot(start.vx,start.vy),angleDeg:params.angleDeg};}
+  function includeVector(bounds,vector){return{xMax:Math.max(bounds.xMax,Math.max(0,vector.end.x)*1.05),yMax:Math.max(bounds.yMax,Math.max(0,vector.end.y)*1.05)};}
+  PL.TrajectoryView={createTransform,dataBounds,velocityVector,includeVector,VELOCITY_VECTOR_SECONDS:.25};
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/charts.js */
+(function (PL) {
+  'use strict';
+  const colors={analytic:'#0b6e99',numeric:'#d97706',drag:'#8b3fa0'},dashes={analytic:[],numeric:[8,4],drag:[3,4]};
+  function setup(canvas){const dpr=window.devicePixelRatio||1,r=canvas.getBoundingClientRect(),w=Math.max(300,r.width),h=Math.max(180,r.height);if(canvas.width!==w*dpr||canvas.height!==h*dpr){canvas.width=w*dpr;canvas.height=h*dpr;}const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+  function drawFrame(c,w,h,xMax,yMax,xLabel,yLabel,transform){const p={l:58,r:16,t:16,b:38},mapX=transform?transform.mapX:PL.Axis.linearScale(0,xMax,p.l,w-p.r),mapY=transform?transform.mapY:PL.Axis.linearScale(0,yMax,h-p.b,p.t),xTicks=PL.Axis.createTicks(xMax,5),yTicks=PL.Axis.createTicks(yMax,4);c.clearRect(0,0,w,h);c.fillStyle='#fff';c.fillRect(0,0,w,h);c.strokeStyle='#cbd5df';c.lineWidth=1;c.font='12px system-ui';c.fillStyle='#536170';xTicks.forEach((t,index)=>{const x=mapX(t.value);c.beginPath();c.moveTo(x,p.t);c.lineTo(x,h-p.b);c.stroke();c.textAlign=index===0?'left':(index===xTicks.length-1?'right':'center');c.fillText(t.label,x,h-p.b+18);});c.textAlign='right';yTicks.forEach(t=>{const y=mapY(t.value);c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillText(t.label,p.l-7,y+4);});c.fillStyle='#263746';c.textAlign='center';c.fillText(xLabel,p.l+(w-p.l-p.r)/2,h-5);c.save();c.translate(13,p.t+(h-p.t-p.b)/2);c.rotate(-Math.PI/2);c.fillText(yLabel,0,0);c.restore();return Object.assign(p,{mapX,mapY});}
+  function line(c,points,mapX,mapY,id){c.strokeStyle=colors[id];c.setLineDash(dashes[id]);c.lineWidth=2;c.beginPath();points.forEach((s,i)=>{const x=mapX(s),y=mapY(s);if(i)c.lineTo(x,y);else c.moveTo(x,y);});c.stroke();c.setLineDash([]);}
+  function drawArrow(c,start,end){const angle=Math.atan2(end.y-start.y,end.x-start.x),head=9;c.beginPath();c.moveTo(start.x,start.y);c.lineTo(end.x,end.y);c.stroke();c.beginPath();c.moveTo(end.x,end.y);c.lineTo(end.x-head*Math.cos(angle-.45),end.y-head*Math.sin(angle-.45));c.lineTo(end.x-head*Math.cos(angle+.45),end.y-head*Math.sin(angle+.45));c.closePath();c.fill();}
+  function drawInitialVector(c,snap,transform,vector){const viewSpan=Math.min(transform.xMax,transform.yMax),origin=transform.mapPoint(vector.start.x,vector.start.y),end=transform.mapPoint(vector.end.x,vector.end.y),radius=Math.min(viewSpan*.08,vector.speed*vector.scaleSeconds*.45),angle=snap.params.angleDeg*Math.PI/180,s0=vector.start;c.save();c.strokeStyle='#153d4d';c.fillStyle='#153d4d';c.lineWidth=2;c.setLineDash([]);drawArrow(c,origin,end);c.strokeStyle='#68808a';c.lineWidth=1;c.setLineDash([4,4]);const refEnd=transform.mapPoint(s0.x+Math.max(radius*1.5,viewSpan*.12),s0.y);c.beginPath();c.moveTo(origin.x,origin.y);c.lineTo(refEnd.x,refEnd.y);c.stroke();c.setLineDash([]);if(radius>0&&Math.abs(angle)>.001){c.strokeStyle='#153d4d';c.beginPath();for(let i=0;i<=24;i+=1){const a=angle*i/24,p=transform.mapPoint(s0.x+radius*Math.cos(a),s0.y+radius*Math.sin(a));if(i)c.lineTo(p.x,p.y);else c.moveTo(p.x,p.y);}c.stroke();}const label=transform.mapPoint(s0.x+radius*1.25*Math.cos(angle/2),s0.y+radius*1.25*Math.sin(angle/2));c.font='bold 12px system-ui';c.textAlign='left';c.fillText('θ = '+PL.Axis.formatTickFi(snap.params.angleDeg,1)+'°',label.x+4,label.y-4);c.restore();}
+  function drawCalculationPoints(c,trajectory,mapX,mapY){c.save();c.fillStyle=colors.numeric;trajectory.samples.forEach(sample=>{c.beginPath();c.arc(mapX(sample),mapY(sample),2.7,0,Math.PI*2);c.fill();});c.restore();}
+  function drawTrajectory(canvas,snap,options){const q=setup(canvas),plot={left:58,right:q.w-16,top:16,bottom:q.h-38},vector=PL.TrajectoryView.velocityVector(snap.params,PL.TrajectoryView.VELOCITY_VECTOR_SECONDS);let bounds=PL.TrajectoryView.dataBounds(snap.trajectories);if(options.showInitialVector)bounds=PL.TrajectoryView.includeVector(bounds,vector);const transform=PL.TrajectoryView.createTransform(bounds,plot,options.scaleMode),p=drawFrame(q.c,q.w,q.h,transform.xMax,transform.yMax,'x (m)','y (m)',transform),mx=s=>p.mapX(s.x),my=s=>p.mapY(s.y);Object.values(snap.trajectories).forEach(t=>line(q.c,t.samples,mx,my,t.id));if(options.showCalculationPoints)drawCalculationPoints(q.c,snap.trajectories.numeric,mx,my);if(options.showInitialVector)drawInitialVector(q.c,snap,transform,vector);Object.keys(snap.states).forEach(id=>{const s=snap.states[id];q.c.fillStyle=colors[id];q.c.beginPath();q.c.arc(mx(s),my(s),5,0,Math.PI*2);q.c.fill();});return transform;}
+  function drawTime(canvas,snap,kind){const q=setup(canvas),all=Object.values(snap.trajectories),maxT=snap.duration||1,values=[];all.forEach(t=>t.samples.forEach(s=>values.push(kind==='position'?Math.max(s.x,s.y):Math.hypot(s.vx,s.vy))));const yMax=Math.max(1,...values)*1.08,p=drawFrame(q.c,q.w,q.h,maxT,yMax,'t (s)',kind==='position'?'paikka (m)':'nopeus (m/s)'),mx=s=>p.mapX(s.t),my=v=>p.mapY(v);all.forEach(t=>{if(kind==='position'){line(q.c,t.samples,mx,s=>my(s.x),t.id);q.c.globalAlpha=.55;line(q.c,t.samples,mx,s=>my(Math.max(0,s.y)),t.id);q.c.globalAlpha=1;}else line(q.c,t.samples,mx,s=>my(Math.hypot(s.vx,s.vy)),t.id);});const cursor=p.mapX(snap.time);q.c.strokeStyle='#1f2937';q.c.beginPath();q.c.moveTo(cursor,p.t);q.c.lineTo(cursor,q.h-p.b);q.c.stroke();}
+  PL.Charts={drawTrajectory,drawPosition:(c,s)=>drawTime(c,s,'position'),drawVelocity:(c,s)=>drawTime(c,s,'velocity')};
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/tasks-data.js */
+(function (PL) {
+  'use strict';
+  PL.TaskData=[
+    {id:'angle-range',title:'1. Lähtökulma ja kantama',goal:'Tutki lähtökulman vaikutusta kantamaan ja komplementtikulmien yhteyttä.',hypothesisPrompt:'Millä lähtökulmalla ennustat kantaman olevan suurin? Perustele lyhyesti.',instructions:'Pidä lähtönopeus ja lähtökorkeus samoina. Tee vähintään kuusi koetta eri kulmilla. Vertaa myös kulmaparia θ ja 90° − θ ilmanvastuksettomassa mallissa.',contextNotice:'Tässä tehtävässä ilmanvastus on poistettu käytöstä, k=0. Mallien radat ovat siksi päällekkäin.',entryValues:{dragCoefficient:0},minObservations:6,presets:[{label:'15°',values:{angleDeg:15,dragCoefficient:0}},{label:'30°',values:{angleDeg:30,dragCoefficient:0}},{label:'45°',values:{angleDeg:45,dragCoefficient:0}},{label:'60°',values:{angleDeg:60,dragCoefficient:0}},{label:'75°',values:{angleDeg:75,dragCoefficient:0}},{label:'80°',values:{angleDeg:80,dragCoefficient:0}}],columns:['Kulma','Kantama','Komplementti','Komplementin kantama'],hints:['Vertaa esimerkiksi kulmia 30° ja 60°. Mitkä alkunopeuden vaaka- ja pystysuuntaiset osat muuttuvat?','Suurempi pystysuuntainen nopeus pidentää lentoaikaa, mutta pienempi vaakasuuntainen nopeus vähentää etenemistä vaakasuunnassa. Komplementtikulmissa nämä vaikutukset vaihtavat rooleja.','Kun lähtö- ja osumakorkeus ovat samat eikä ilmanvastusta ole, kantama riippuu termistä sin(2θ). Siksi kulmat θ ja 90°−θ tuottavat saman kantaman. Tutki erikseen, mitä tapahtuu, jos lähtökorkeus ei ole nolla.']},
+    {id:'drag-effect',title:'2. Ilmanvastuksen vaikutus',goal:'Vertaa vastuksetonta fysikaalista mallia ja neliöllisen ilmanvastuksen mallia.',hypothesisPrompt:'Miten ilmanvastus vaikuttaa kantamaan, lakikorkeuteen, lentoaikaan ja osumanopeuteen?',instructions:'Tutki vähintään kolmea positiivista vastuskertoimen arvoa. Analyyttinen ja vastukseton RK4 ratkaisevat saman fysikaalisen mallin eri menetelmillä; vastusmalli on eri fysikaalinen malli.',contextNotice:'Tehtävä alkaa arvolla k=0,02 kg/m, jotta vastuksettoman ja ilmanvastuksellisen radan ero näkyy heti.',entryValues:{dragCoefficient:.02},minObservations:3,presets:[{label:'k = 0,005',values:{dragCoefficient:.005}},{label:'k = 0,02',values:{dragCoefficient:.02}},{label:'k = 0,05',values:{dragCoefficient:.05}}],columns:['k','Kantama: ei vastusta / vastus','Lakikorkeus: ei vastusta / vastus','Lentoaika: ei vastusta / vastus','Osumanopeus: ei vastusta / vastus'],hints:['Katso, miten ilmanvastus muuttaa erityisesti vaakasuuntaista nopeutta ja kantamaa.','Ilmanvastus vaikuttaa aina liikkeen suuntaa vastaan. Siksi kappale menettää nopeutta ja rata jää yleensä lyhyemmäksi kuin ilman ilmanvastusta.','Analyyttinen ratkaisu ja RK4 ilman vastusta kuvaavat samaa fysikaalista mallia eri ratkaisumenetelmillä. Neliöllinen ilmanvastus taas on eri fysikaalinen malli.']},
+    {id:'time-step',title:'3. Numeerisen aika-askeleen vaikutus',goal:'Tutki RK4-ratkaisun aika-askeleen vaikutusta laskentapisteiden määrään, ratakuvan ulkonäköön, maaosuman paikantamiseen ja numeerisiin tuloksiin.',hypothesisPrompt:'Miten aika-askeleen koko vaikuttaa laskentapisteiden määrään, ratakuvan ulkonäköön, maaosuman paikantamiseen ja numeerisiin tuloksiin?',instructions:'Vastuskerroin asetetaan arvoon k=0. Vertaa samaa vastuksetonta fysikaalista mallia analyyttisellä ratkaisulla ja RK4-menetelmällä vähintään kolmella aika-askeleella. Tunnuslukujen virhe, maaosuman paikannus, kuvaajan näytteistys ja laskenta-askelten määrä ovat eri asioita. Maaosuma paikannetaan tässä sovelluksessa aika-askeleen sisältä juurihakuna.',contextNotice:'Tässä verrataan samaa vastuksetonta fysikaalista mallia analyyttisellä ja numeerisella ratkaisumenetelmällä. k=0 ja RK4-laskentapisteet näytetään ratakuvassa.',entryValues:{dragCoefficient:0,dt:.5,showCalculationPoints:true},minObservations:3,presets:[{label:'Δt = 0,5 s',values:{dt:.5,dragCoefficient:0,showCalculationPoints:true}},{label:'Δt = 0,2 s',values:{dt:.2,dragCoefficient:0,showCalculationPoints:true}},{label:'Δt = 0,05 s',values:{dt:.05,dragCoefficient:0,showCalculationPoints:true}},{label:'Δt = 0,01 s',values:{dt:.01,dragCoefficient:0,showCalculationPoints:true}}],columns:['Δt','Kantamavirhe','Lentoaikavirhe','RK4-askelia','Laskentapisteitä'],hints:['Katso, miten laskentapisteiden määrä muuttuu, kun aika-askel pienenee.','Suuri aika-askel tekee ratakuvasta kulmikkaamman, koska pisteitä on vähemmän. Tämä ei tarkoita, että kappale oikeasti liikkuisi suorina jaksoina.','RK4 ratkaisee vakion kiihtyvyyden tapauksen erittäin tarkasti, joten kantaman ja lentoajan virhe voi jäädä pieneksi suurellakin aika-askeleella. Maaosuman juurihaku pienentää lisäksi viimeisen askeleen aiheuttamaa osumavirhettä.']}
+  ];
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/task-engine.js */
+(function (PL) {
+  'use strict';
+  function emptySession(){return{hypothesis:'',conclusion:'',observations:[],hintIndex:0};}
+  function createManager(tasks){const sessions={};tasks.forEach(t=>sessions[t.id]=emptySession());return{tasks,currentTaskId:null,sessions};}
+  function currentTask(manager){return manager.tasks.find(t=>t.id===manager.currentTaskId);}
+  function currentSession(manager){return manager.currentTaskId?manager.sessions[manager.currentTaskId]:null;}
+  function switchTask(manager,id){if(!manager.tasks.some(t=>t.id===id))throw new Error('Tuntematon tehtävä');if(manager.currentTaskId!==id)manager.sessions[id].hintIndex=0;manager.currentTaskId=id;return currentSession(manager);}
+  function resetTask(manager,id){const taskId=id||manager.currentTaskId;if(!taskId)throw new Error('Tehtävää ei ole valittu');manager.sessions[taskId]=emptySession();return manager.sessions[taskId];}
+  function clearAll(manager){manager.tasks.forEach(task=>manager.sessions[task.id]=emptySession());manager.currentTaskId=null;return manager;}
+  function errorMetrics(analytic,numeric){function item(a,n){const absolute=Math.abs(n-a);return{absolute,relative:a===0?(absolute===0?0:Infinity):absolute/Math.abs(a)};}return{range:item(analytic.range,numeric.range),flightTime:item(analytic.flightTime,numeric.flightTime)};}
+  function complementComparison(params){const angle=params.angleDeg,complement=90-angle,a=PL.Physics.analyticMetrics(params),b=PL.Physics.analyticMetrics(Object.assign({},params,{angleDeg:complement}));return{angle,complement,range:a.range,complementRange:b.range,difference:Math.abs(a.range-b.range)};}
+  function observationFor(taskId,snapshot){const p=snapshot.params,t=snapshot.trajectories,a=t.analytic.metrics,n=t.numeric.metrics,d=t.drag.metrics;if(taskId==='angle-range'){const c=complementComparison(p);return{cells:[c.angle+'°',c.range,c.complement+'°',c.complementRange],data:c};}if(taskId==='drag-effect')return{cells:[p.dragCoefficient,[a.range,d.range],[a.maxHeight,d.maxHeight],[a.flightTime,d.flightTime],[a.impactSpeed,d.impactSpeed]],data:{k:p.dragCoefficient,analytic:a,drag:d}};if(taskId==='time-step'){const errors=errorMetrics(a,n),points=t.numeric.samples.length,steps=Math.max(0,points-1);return{cells:[p.dt,errors.range.absolute,errors.flightTime.absolute,steps,points],data:{dt:p.dt,errors,steps,points,dragCoefficient:p.dragCoefficient}};}throw new Error('Tuntematon tehtävä');}
+  function addObservation(manager,snapshot){const observation=observationFor(manager.currentTaskId,snapshot);currentSession(manager).observations.push(observation);return observation;}
+  function nextHint(manager){const task=currentTask(manager),session=currentSession(manager);if(!task||!session)throw new Error('Tehtävää ei ole valittu');session.hintIndex=session.hintIndex>=task.hints.length?1:session.hintIndex+1;return task.hints[session.hintIndex-1];}
+  function hintButtonLabel(manager){const task=currentTask(manager),session=currentSession(manager);return task&&session&&session.hintIndex===task.hints.length?'Näytä vihjeet alusta':'Näytä seuraava vihje';}
+  function feedback(manager){const task=currentTask(manager),session=currentSession(manager),count=session.observations.length;if(count<task.minObservations)return'Tee vielä '+(task.minObservations-count)+' havainto'+(task.minObservations-count===1?'':'a')+'.';if(task.id==='angle-range'){const distinct=new Set(session.observations.map(o=>o.data.angle));if(distinct.size<6)return'Havaintoja on tarpeeksi, mutta tutki vähintään kuutta eri lähtökulmaa.';const best=session.observations.reduce((a,b)=>b.data.range>a.data.range?b:a);return'Kuusi eri kulmaa on tutkittu. Suurin mitattu kantama saatiin kulmalla '+best.data.angle+'°. Vertaa nyt komplementtikulmia ja kirjoita päätelmä.';}if(task.id==='drag-effect'){const distinctPositive=new Set(session.observations.filter(o=>o.data.k>0).map(o=>o.data.k));return distinctPositive.size<3?'Havaintoja on tarpeeksi, mutta käytä vähintään kolmea eri positiivista vastuskertoimen arvoa.':'Kolme positiivista vastuskerrointa on vertailtu. Erota päätelmässä fysikaalisen mallin muutos ratkaisumenetelmän muutoksesta.';}const distinctDt=new Set(session.observations.map(o=>o.data.dt)),zeroDrag=session.observations.every(o=>o.data.dragCoefficient===0);if(!zeroDrag)return'Aseta ilmanvastus nollaksi, jotta vertaat RK4:ää samaan analyyttiseen malliin.';if(distinctDt.size<3)return'Havaintoja on tarpeeksi, mutta käytä vähintään kolmea eri aika-askelta.';const displayLevel=session.observations.every(o=>o.data.errors.range.absolute<1e-9&&o.data.errors.flightTime.absolute<1e-9);return displayLevel?'Tunnuslukujen virhe jäi näyttötarkkuuden tasolle. Tämä on hyväksyttävä havainto vakion kiihtyvyyden RK4-tapauksessa. Vertaa silti laskentapisteiden määrää ja radan kulmikkuutta; maaosuma tarkennetaan askeleen sisältä juurihakuna.':'Kolme aika-askelta on vertailtu. Tarkastele erikseen tunnuslukujen virhettä, laskentapisteiden määrää, ratakuvan näytteistystä ja maaosuman paikannusta.';}
+  PL.TaskEngine={createManager,currentTask,currentSession,switchTask,resetTask,clearAll,errorMetrics,complementComparison,observationFor,addObservation,nextHint,hintButtonLabel,feedback,capabilities:{network:false,persistentStorage:false}};
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/tasks-ui.js */
+(function (PL) {
+  'use strict';
+  function setText(element,value){element.textContent=String(value==null?'':value);return element;}
+  function make(tag,className,text){const element=document.createElement(tag);if(className)element.className=className;if(text!==undefined)setText(element,text);return element;}
+  function formatValue(value){if(Array.isArray(value))return value.map(formatValue).join(' / ');if(typeof value!=='number')return String(value);if(!Number.isFinite(value))return'—';const magnitude=Math.abs(value),digits=magnitude===0?0:(magnitude<.0001?8:magnitude<.01?6:magnitude<1?4:3);return value.toFixed(digits).replace('.',',');}
+  function init(config){const manager=PL.TaskEngine.createManager(PL.TaskData),select=document.getElementById('taskSelect'),placeholder=make('option','','Valitse tutkimustehtävä');placeholder.value='';select.appendChild(placeholder);PL.TaskData.forEach(task=>{const option=make('option','',task.title);option.value=task.id;select.appendChild(option);});
+    function saveText(){const session=PL.TaskEngine.currentSession(manager);if(!session)return;session.hypothesis=document.getElementById('taskHypothesis').value;session.conclusion=document.getElementById('taskConclusion').value;}
+    function renderObservations(){const task=PL.TaskEngine.currentTask(manager),session=PL.TaskEngine.currentSession(manager),head=document.getElementById('observationHead'),body=document.getElementById('observationBody');head.textContent='';body.textContent='';const row=make('tr');task.columns.forEach(label=>{const cell=make('th','',label);cell.scope='col';row.appendChild(cell);});head.appendChild(row);session.observations.forEach(observation=>{const tr=make('tr');observation.cells.forEach(value=>tr.appendChild(make('td','',formatValue(value))));body.appendChild(tr);});setText(document.getElementById('observationCount'),session.observations.length+' / '+task.minObservations+' vähimmäishavaintoa');setText(document.getElementById('taskFeedback'),PL.TaskEngine.feedback(manager));}
+    function render(){const task=PL.TaskEngine.currentTask(manager),intro=document.getElementById('taskIntro'),workspace=document.getElementById('taskWorkspace');if(!task){select.value='';intro.hidden=false;workspace.hidden=true;setText(document.getElementById('taskContextNotice'),'');return;}const session=PL.TaskEngine.currentSession(manager);intro.hidden=true;workspace.hidden=false;select.value=task.id;setText(document.getElementById('taskGoal'),task.goal);setText(document.getElementById('taskInstructions'),task.instructions);setText(document.getElementById('taskContextNotice'),task.contextNotice||'');setText(document.getElementById('hypothesisPrompt'),task.hypothesisPrompt);document.getElementById('taskHypothesis').value=session.hypothesis;document.getElementById('taskConclusion').value=session.conclusion;const presets=document.getElementById('taskPresets');presets.textContent='';task.presets.forEach(preset=>{const button=make('button','preset-button',preset.label);button.type='button';button.addEventListener('click',()=>config.applyParams(preset.values));presets.appendChild(button);});setText(document.getElementById('taskHint'),session.hintIndex?task.hints[session.hintIndex-1]:'Avaa vihje tarvittaessa.');setText(document.getElementById('showHint'),PL.TaskEngine.hintButtonLabel(manager));renderObservations();}
+    function activate(id){saveText();PL.TaskEngine.switchTask(manager,id);const task=PL.TaskEngine.currentTask(manager);if(task.entryValues)config.applyParams(task.entryValues);render();}
+    function clearToBase(){PL.TaskEngine.clearAll(manager);render();}
+    select.addEventListener('change',()=>{if(select.value)activate(select.value);else clearToBase();});document.getElementById('taskHypothesis').addEventListener('input',event=>{PL.TaskEngine.currentSession(manager).hypothesis=event.target.value;});document.getElementById('taskConclusion').addEventListener('input',event=>{PL.TaskEngine.currentSession(manager).conclusion=event.target.value;});document.getElementById('addObservation').addEventListener('click',()=>{PL.TaskEngine.addObservation(manager,config.getSnapshot());renderObservations();});document.getElementById('resetTask').addEventListener('click',()=>{const task=PL.TaskEngine.currentTask(manager);PL.TaskEngine.resetTask(manager);if(task.entryValues)config.applyParams(task.entryValues);render();});document.getElementById('showHint').addEventListener('click',event=>{setText(document.getElementById('taskHint'),PL.TaskEngine.nextHint(manager));setText(event.currentTarget,PL.TaskEngine.hintButtonLabel(manager));});render();return{manager,render,renderObservations,activate,clearToBase};}
+  PL.TasksUI={init,setText,formatValue};
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/ui.js */
+(function (PL) {
+  'use strict';
+  const $=id=>document.getElementById(id),fields=['speed','angleDeg','height','mass','gravity','dragCoefficient','dt'];
+  function paramsFromValues(values){const p={};fields.forEach(key=>{const raw=values[key];if(raw===undefined||raw===null||String(raw).trim()==='')throw new Error('Täytä kaikki alkuarvot.');p[key]=Number(raw);});PL.Physics.validateParams(p);return p;}
+  function params(){const values={};fields.forEach(key=>values[key]=$(key).value);return paramsFromValues(values);}
+  function fmt(value,digits){return Number.isFinite(value)?value.toFixed(digits===undefined?2:digits).replace('.',','):'—';}
+  function dragPresentation(k){return{legend:'Neliöllinen vastus, k='+(k===0?'0':PL.Axis.formatTickFi(k,k)),showZeroNotice:k===0,notice:'Kun k=0, neliöllisen ilmanvastuksen termi häviää ja malli palautuu vastuksettomaksi malliksi. Ratojen päällekkäisyys on odotettu tulos.'};}
+  function viewOptions(){const selected=document.querySelector('input[name="scaleMode"]:checked');return{scaleMode:selected?selected.value:'true-scale',showInitialVector:$('showInitialVector').checked,showCalculationPoints:$('showCalculationPoints').checked};}
+  function moment(snapshot,key){const state=snapshot.states[key],trajectory=snapshot.trajectories[key],landed=snapshot.time>=trajectory.metrics.flightTime-1e-10;return{x:state.x,y:state.y,vx:state.vx,vy:state.vy,speed:Math.hypot(state.vx,state.vy),landed,phase:landed?'Osunut maahan':'Lennossa',flightTime:trajectory.metrics.flightTime};}
+  function instantaneousComparison(snapshot){return{free:moment(snapshot,'numeric'),drag:moment(snapshot,'drag'),time:snapshot.time};}
+  function renderMoment(prefix,value){$(prefix+'X').textContent=fmt(value.x,2)+' m';$(prefix+'Y').textContent=fmt(value.y,2)+' m';$(prefix+'Vx').textContent=fmt(value.vx,2)+' m/s';$(prefix+'Vy').textContent=fmt(value.vy,2)+' m/s';$(prefix+'Speed').textContent=fmt(value.speed,2)+' m/s';$(prefix+'Phase').textContent=value.landed?'Osunut maahan ajassa '+fmt(value.flightTime,3)+' s':'Lennossa';$(prefix+'Phase').classList.toggle('landed',value.landed);}
+  function metricRows(snapshot){const body=$('metricsBody');body.textContent='';[['analytic','Analyyttinen'],['numeric','RK4, ei vastusta'],['drag','Neliöllinen vastus']].forEach(item=>{const m=snapshot.trajectories[item[0]].metrics,tr=document.createElement('tr'),header=document.createElement('th');header.scope='row';header.textContent=item[1];tr.appendChild(header);[m.flightTime,m.maxHeight,m.range,m.impactSpeed].forEach(value=>{const cell=document.createElement('td');cell.textContent=fmt(value,3);tr.appendChild(cell);});body.appendChild(tr);});}
+  function renderSummaries(snapshot,comparison){const time=fmt(snapshot.time,3),free='Vastukseton vertailumalli: '+comparison.free.phase+', x '+fmt(comparison.free.x,2)+' metriä, y '+fmt(comparison.free.y,2)+' metriä, v x '+fmt(comparison.free.vx,2)+' metriä sekunnissa ja v y '+fmt(comparison.free.vy,2)+' metriä sekunnissa.',drag='Ilmanvastusmalli: '+comparison.drag.phase+', x '+fmt(comparison.drag.x,2)+' metriä, y '+fmt(comparison.drag.y,2)+' metriä, v x '+fmt(comparison.drag.vx,2)+' metriä sekunnissa ja v y '+fmt(comparison.drag.vy,2)+' metriä sekunnissa.';$('trajectorySummary').textContent='Ratakuva ajanhetkellä '+time+' sekuntia. '+free+' '+drag;$('positionSummary').textContent='Paikkakuvaaja esittää mallien x- ja y-koordinaatit ajan funktiona. Nykyinen aika '+time+' sekuntia. '+free+' '+drag;$('velocitySummary').textContent='Nopeuskuvaaja esittää nopeuden suuruuden ajan funktiona. Nykyinen aika '+time+' sekuntia. Vastuksettoman mallin nopeus '+fmt(comparison.free.speed,2)+' metriä sekunnissa ja ilmanvastusmallin nopeus '+fmt(comparison.drag.speed,2)+' metriä sekunnissa.';}
+  function render(snapshot){$('timeValue').textContent=fmt(snapshot.time,3)+' s';$('status').textContent=snapshot.running?'Käynnissä':(snapshot.time>=snapshot.duration?'Päättynyt':'Tauko / valmis');const comparison=instantaneousComparison(snapshot);renderMoment('free',comparison.free);renderMoment('drag',comparison.drag);$('play').disabled=snapshot.running||snapshot.time>=snapshot.duration;$('pause').disabled=!snapshot.running;$('step').disabled=snapshot.time>=snapshot.duration;metricRows(snapshot);const options=viewOptions(),drag=dragPresentation(snapshot.params.dragCoefficient);$('scaleWarning').hidden=options.scaleMode!=='fit';$('zeroDragNotice').hidden=!drag.showZeroNotice;$('dragLegendLabel').textContent=drag.legend;PL.Charts.drawTrajectory($('trajectory'),snapshot,options);PL.Charts.drawPosition($('positionChart'),snapshot);PL.Charts.drawVelocity($('velocityChart'),snapshot);renderSummaries(snapshot,comparison);}
+  PL.UI={params,paramsFromValues,fmt,viewOptions,dragPresentation,instantaneousComparison,render,fields,$};
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script>
+<script>
+/* Upotettu lähdetiedosto: js/app.js */
+(function (PL) {
+  'use strict';
+  const DEFAULT_PARAMS={speed:20,angleDeg:45,height:0,mass:1,gravity:9.81,dragCoefficient:.02,dt:.01};
+  let controller,tasks;
+  function reset(){try{controller.reset(PL.UI.params());document.getElementById('error').textContent='';}catch(error){document.getElementById('error').textContent=error.message;}}
+  function applyParams(values){Object.keys(values).forEach(key=>{const input=document.getElementById(key);if(!input)return;if(key==='showCalculationPoints'||key==='showInitialVector')input.checked=Boolean(values[key]);else input.value=values[key];});reset();}
+  function restoreBase(){if(tasks)tasks.clearToBase();document.querySelector('input[name="scaleMode"][value="true-scale"]').checked=true;document.querySelector('input[name="scaleMode"][value="fit"]').checked=false;document.getElementById('showInitialVector').checked=true;document.getElementById('showCalculationPoints').checked=false;applyParams(DEFAULT_PARAMS);}
+  function init(){controller=new PL.Simulation.Controller(PL.UI.render);document.getElementById('play').addEventListener('click',()=>controller.play());document.getElementById('pause').addEventListener('click',()=>controller.pause());document.getElementById('step').addEventListener('click',()=>controller.step());document.getElementById('reset').addEventListener('click',reset);document.getElementById('restoreDefaults').addEventListener('click',restoreBase);PL.UI.fields.forEach(key=>document.getElementById(key).addEventListener('change',reset));document.querySelectorAll('input[name="scaleMode"], #showInitialVector, #showCalculationPoints').forEach(element=>element.addEventListener('change',()=>controller.emit()));window.addEventListener('resize',()=>controller.emit());reset();tasks=PL.TasksUI.init({getSnapshot:()=>controller.snapshot(),applyParams});PL.App={controller,reset,applyParams,restoreBase,DEFAULT_PARAMS,tasks};}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+}(window.ProjectileLab=window.ProjectileLab||{}));
+</script></body></html>
+
+
