@@ -12,6 +12,10 @@ Täysin offline-toimiva lukion fysiikan selain­sovellus heittoliikkeen tutkimis
 
 ![Heittoliikkeen tutkimuslaboratorion tutkimustehtäväpaneeli](docs/screenshots/research-tasks.png)
 
+## Kokeile sovellusta verkossa
+
+[Avaa Heittoliikkeen tutkimuslaboratorio](https://jh-scienceworks.github.io/heittoliikkeen-tutkimuslaboratorio/)
+
 ## Käynnistäminen
 
 1. Avaa `index.html` Windowsin tiedostoselaimesta Firefoxiin tai Chromeen.
