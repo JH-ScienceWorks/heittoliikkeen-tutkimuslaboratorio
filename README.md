@@ -1,4 +1,4 @@
-# Fysiikan tutkimuslaboratorio
+# Heittoliikkeen tutkimuslaboratorio
 
 Täysin offline-toimiva lukion fysiikan selain­sovellus heittoliikkeen tutkimiseen. Sovellus vertailee analyyttistä ilmanvastuksetonta mallia, vastaavaa numeerista RK4-ratkaisua ja neliöllisen ilmanvastuksen mallia.
 
@@ -22,7 +22,7 @@ Täysin offline-toimiva lukion fysiikan selain­sovellus heittoliikkeen tutkimis
 
 Ensimmäinen jaettava versio on `heittoliikkeen-tutkimuslaboratorio-standalone.html`, versio 1.0.0, muodostettu 13.7.2026. Avaa tiedosto suoraan Windowsin tiedostoselaimesta Firefoxiin tai Chromeen. Jakamista varten tarvitsee lähettää vain tämä yksi HTML-tiedosto; sen rinnalle ei tarvita muita tiedostoja tai kansioita.
 
-Standalone-versio sisältää kehitysversion HTML:n, CSS:n ja JavaScriptin sisäisesti samassa latausjärjestyksessä. Kehitys- ja standalone-versiot ovat toiminnallisesti vastaavat. Standalone ei käytä verkkoyhteyttä, ulkoisia resursseja, analytiikkaa, evästeitä eikä pysyvää selaintallennusta. Oppilaan kirjoittamat tekstit ja havainnot säilyvät vain avoimen sivun muistissa ja katoavat, kun tiedosto suljetaan tai ladataan uudelleen.
+Standalone-versio sisältää kehitysversion HTML:n, CSS:n ja JavaScriptin sisäisesti samassa latausjärjestyksessä. Kehitys- ja standalone-versiot ovat toiminnallisesti vastaavat. Standalone ei käytä verkkoyhteyttä, ulkoisia resursseja, analytiikkaa, evästeitä eikä pysyvää selaintallennusta. Opiskelijan kirjoittamat tekstit ja havainnot säilyvät vain avoimen sivun muistissa ja katoavat, kun tiedosto suljetaan tai ladataan uudelleen.
 
 ## Tuetut selaimet ja saavutettavuus
 
@@ -50,7 +50,7 @@ Sovellus käynnistyy neutraalissa vapaan tutkimisen näkymässä perusasetuksill
 
 **Palauta perusnäkymä** poistaa aktiivisen tehtävän, tyhjentää kaikki tehtäväistunnot ja palauttaa yleiset asetukset. **Nollaa tämä tehtävä** säilyttää nykyisen tehtävävalinnan, tyhjentää vain sen vastaukset ja havainnot sekä palauttaa tehtävän omat lähtöasetukset.
 
-Tekstit ja havainnot säilyvät vain niin kauan kuin sivu on avoinna. Tehtävän vaihtaminen säilyttää muiden tehtävien hypoteesit, päätelmät ja havainnot, mutta palauttaa valitun tehtävän vihjeet alkutilaan. Sivun sulkeminen poistaa kaiken oppilaan kirjoittaman sisällön.
+Tekstit ja havainnot säilyvät vain niin kauan kuin sivu on avoinna. Tehtävän vaihtaminen säilyttää muiden tehtävien hypoteesit, päätelmät ja havainnot, mutta palauttaa valitun tehtävän vihjeet alkutilaan. Sivun sulkeminen poistaa kaiken opiskelijan kirjoittaman sisällön.
 
 Syötekentät hylkäävät tyhjät, ei-äärelliset ja sallittujen rajojen ulkopuoliset arvot. Sovellus keskeyttää myös laskennan selkeällä virheilmoituksella, jos parametriyhdistelmä vaatisi kohtuuttoman suuren näytemäärän tai tekisi kiinteäaskelisesta RK4-laskennasta epävakaan.
 
