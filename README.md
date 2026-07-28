@@ -2,6 +2,16 @@
 
 Täysin offline-toimiva lukion fysiikan selain­sovellus heittoliikkeen tutkimiseen. Sovellus vertailee analyyttistä ilmanvastuksetonta mallia, vastaavaa numeerista RK4-ratkaisua ja neliöllisen ilmanvastuksen mallia.
 
+## Kuvakaappaukset
+
+### Simulaatio ja mallien vertailu
+
+![Heittoliikkeen tutkimuslaboratorion simulaationäkymä](docs/screenshots/laboratory-overview.png)
+
+### Ohjatut tutkimustehtävät
+
+![Heittoliikkeen tutkimuslaboratorion tutkimustehtäväpaneeli](docs/screenshots/research-tasks.png)
+
 ## Käynnistäminen
 
 1. Avaa `index.html` Windowsin tiedostoselaimesta Firefoxiin tai Chromeen.
