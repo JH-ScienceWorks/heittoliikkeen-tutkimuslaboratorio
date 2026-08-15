@@ -79,3 +79,11 @@ Tehtävä 1 käyttää tarkoituksella arvoa `k=0`; tällöin kaikki kolme rataa 
 ## Rajaukset
 
 Sovellus ei tallenna tai vie tehtävävastauksia, arvioi vapaamuotoista tekstiä tai sisällä käyttäjätilejä. Uudet fysiikkamallit sekä hetkelliset nopeus-, kiihtyvyys- ja voimavektorit on rajattu myöhempään versioon 1.1.
+
+## Kehitystapa, oma rooli ja tekoälyn käyttö
+
+Projekti on toteutettu tekoälyavusteisesti OpenAI Codexissa käyttäen GPT-5.6 Sol -mallia.
+
+Projektin pedagoginen tavoite, fysiikan sisältö, ominaisuusrajaukset, käyttöliittymän arviointi, testaus ja lopulliset hyväksymispäätökset ovat tekijän vastuulla. Codexia käytettiin projektin suunnittelun tukena sekä koodin, testien ja teknisen dokumentaation tuottamiseen ja tarkistamiseen.
+
+Kaikki julkaistut toiminnot on tarkistettu automaattisilla testeillä ja manuaalisesti Firefox- ja Chrome-selaimissa.
